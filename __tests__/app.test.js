@@ -12,13 +12,12 @@ afterAll(() => {
   return db.end();
 });
 
-describe("/api/products", () => {
+describe("GET /api/products", () => {
   test("200: lists all products", () => {
     return request(app)
       .get("/api/products")
       .expect(200)
       .then(({ body }) => {
-        console.log(body);
         expect(body.products.length).toBe(3);
         body.products.forEach((product) => {
           expect(product).toEqual(
@@ -28,6 +27,26 @@ describe("/api/products", () => {
             })
           );
         });
+      });
+  });
+  test("404: Path not Found if path doesnt exist, default 404 from express", () => {
+    return request(app).get("/api/notfound").expect(404);
+  });
+});
+
+describe("POST /api/products", () => {
+  test("201: create and return the given product", () => {
+    return request(app)
+      .post("/api/products")
+      .send({ title: "New Camera", brand: "New Cameras Brand" })
+      .expect(201)
+      .then(({ body }) => {
+        expect(body).toEqual(
+          expect.objectContaining({
+            title: "New Camera",
+            brand: "New Cameras Brand",
+          })
+        );
       });
   });
 });

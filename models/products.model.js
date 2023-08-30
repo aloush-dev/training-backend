@@ -4,3 +4,14 @@ exports.returnAllProducts = () => {
     return rows;
   });
 };
+
+exports.insertProduct = (title, brand) => {
+  return db
+    .query("INSERT INTO products (title, brand) VALUES ($1, $2) RETURNING *;", [
+      title,
+      brand,
+    ])
+    .then(({ rows }) => {
+      return rows[0];
+    });
+};
